@@ -12,7 +12,7 @@ My security work starts with the systems I support: Windows endpoints, identity 
 |---|---|---|
 | **[Windows Security Event Analysis](Windows-Security-Event-Analysis/README.md)** | 4624/4672 correlation, process auditing, log retention | **Real read-only investigation** · No confirmed incident |
 | **[Windows Security Hardening](Windows-Security-Hardening/README.md)** | Firewall, Defender, auditing, PowerShell, BitLocker and boot posture | **Real 30-step assessment** · One approved log-size change |
-| **[SSH Authentication Triage on Raspberry Pi](Raspberry-Pi-SSH-Authentication-Triage/README.md)** | Correlated password rejections, pre-authentication closure, and subsequent login | **Documented lab** · Legitimate activity confirmed with the operator |
+| **[SSH Authentication Triage on Raspberry Pi](Raspberry-Pi-SSH-Authentication-Triage/README.md)** | Correlated password rejections, pre-authentication closure, and subsequent login. Includes a verified migration to Ed25519 keys | **Documented lab** · Legitimate activity confirmed with the operator |
 | **[Enterprise Information Security Risk Assessment](../Information-Security/Enterprise-Risk-Assessment/README.md)** | Asset inventory, risk register, control mapping and treatment planning | **Simulated** · No real controls assessed |
 
 ## Windows security: two connected investigations
