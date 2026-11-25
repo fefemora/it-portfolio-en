@@ -8,7 +8,6 @@ I set up a local DNS server on a Raspberry Pi 3 Model B and queried it from Wind
 
 ## Environment and configuration
 
-- **Test date** · November 25, 2026
 - **Server** · Raspberry Pi 3 Model B, Raspbian GNU/Linux 13 (Trixie), `dnsmasq`, Wi-Fi (`wlan0`).
 - **Resources before installation** · 767 MiB of available RAM and 11 GiB of free space on the microSD card.
 - **Client** · Windows, PowerShell, and `nslookup`.
