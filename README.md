@@ -18,7 +18,7 @@ The projects below show **what I checked, what I found, and what I could verify*
 | [<img src="assets/icons/cybersecurity.svg" width="32" alt="Cybersecurity icon"> **Cybersecurity**](Cybersecurity/README.md) | Windows event analysis, endpoint security assessment, and controlled change validation |
 | [<img src="assets/icons/information-security.svg" width="32" alt="Information Security icon"> **Information Security / GRC**](Information-Security/Enterprise-Risk-Assessment/README.md) | Fictional enterprise risk assessment mapped to NIST CSF 2.0 and CIS Controls |
 | [<img src="assets/icons/systems-administration.svg" width="32" alt="Systems Administration icon"> **Systems Administration**](Systems-Administration/README.md) | Windows Server, Active Directory and identity management focus |
-| [<img src="assets/icons/networking.svg" width="32" alt="Networking icon"> **Networking**](Networking/README.md) | DNS, VPN, addressing and structured connectivity troubleshooting |
+| [<img src="assets/icons/networking.svg" width="32" alt="Networking icon"> **Networking**](Networking/README.md) | [Raspberry Pi DNS troubleshooting lab](Networking/Raspberry-Pi-DNS-Lab/README.md), VPN and connectivity |
 | [<img src="assets/icons/cloud.svg" width="32" alt="Cloud icon"> **Cloud Networking & Security**](Cloud/README.md) | Azure, cloud access controls and hybrid networking development plans |
 | [<img src="assets/icons/documentation.svg" width="32" alt="Documentation icon"> **Technical Documentation**](Documentation/README.md) | Incident reports, evidence practices and reusable documentation |
 
