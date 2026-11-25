@@ -4,7 +4,7 @@
 
 ![IT Support](https://img.shields.io/badge/IT_Support-L1%2FL2-14283F?style=flat-square) ![Systems Administration](https://img.shields.io/badge/Systems-Administration-14283F?style=flat-square) ![Cybersecurity](https://img.shields.io/badge/Cybersecurity-Blue_Team-059669?style=flat-square) ![Evidence](https://img.shields.io/badge/Evidence-Real_%26_Simulated-64748B?style=flat-square)
 
-**[Versión en español / Spanish version](https://github.com/fefemora/it-portfolio-es)**
+**[Versión en español / Spanish version](https://github.com/fefemora/it-portfolio-es)** · [Methodology](methodology/README.md)
 
 I work across IT support, systems administration, and security. Much of my experience comes from troubleshooting systems, helping users get back to work, and keeping IT services running. This portfolio brings that work together with hands-on security investigations, technical documentation, and risk assessment.
 
@@ -91,6 +91,8 @@ Completed **28 technical checks and two assessment/closure steps** across Window
 I'm building on this foundation with **Active Directory and identity labs**, deeper **network diagnostics**, **SIEM monitoring**, and **cloud networking/security**. These are areas of development, not completed case studies.
 
 ## How evidence is handled
+
+See [how I work](methodology/README.md), the [investigation template](methodology/investigation-template.md), and the [evidence and validation criteria](methodology/evidence-and-validation.md).
 
 Every project distinguishes **real observations**, **simulated scenarios**, and **proposed changes**. I document limitations where a test, root cause, or security outcome has not been established. Public examples exclude confidential customer data and credentials.
 

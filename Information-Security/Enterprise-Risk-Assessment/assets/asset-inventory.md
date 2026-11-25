@@ -98,7 +98,7 @@ The following are **assessment questions**, not confirmed deficiencies:
 
 This inventory supports asset and risk identification activities in the **IDENTIFY** function of NIST CSF 2.0, including asset management. It also creates a basis for evaluating applicable **CIS Controls v8.1 IG1** safeguards related to enterprise asset inventory, software inventory, account management, access control, data protection, and data recovery.
 
-Specific framework subcategories and safeguards will be cross-referenced in the dedicated control mapping document. Framework alignment is proposed, not independently audited.
+See the [control mapping](../controls/control-mapping.md) for the proposed framework subcategories and safeguards. Framework alignment is proposed, not independently audited.
 
 ## 8. Evidence and Limitations
 

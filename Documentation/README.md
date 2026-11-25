@@ -27,6 +27,8 @@ A useful record should answer five questions:
 
 ## Reusable documentation
 
+[Methodology](../methodology/README.md) · [Investigation template](../methodology/investigation-template.md) · [Evidence and validation](../methodology/evidence-and-validation.md)
+
 The [service desk incident template](../IT-Support/Service-Desk-Incident-Management/templates/incident-report-template.md) is already available. Additional troubleshooting, lab and change-management templates may be added as the portfolio grows.
 
 Public documentation uses fictional or sanitized data. Credentials, secrets and confidential customer details have no place here.

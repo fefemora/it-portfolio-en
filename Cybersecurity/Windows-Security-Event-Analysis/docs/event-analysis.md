@@ -102,8 +102,12 @@ A read-only query extracted metadata from the **five most recent retained** even
 
 ## Verified event 4719 search result
 
-The read-only query `Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4719} -MaxEvents 5 | Select-Object TimeCreated, Id, RecordId` returned **no matching events** and PowerShell reported `NoMatchingEventsFound`.
+The read-only query returned **no matching events** (`NoMatchingEventsFound`).
 
+```powershell
+Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4719} -MaxEvents 5 |
+    Select-Object TimeCreated, Id, RecordId
+```
 This supports only the statement that **no event 4719 record was returned from the currently retained log**. It does not prove that audit policy never changed, that a change took place, or why event 4688 records exist while Process Creation auditing is currently disabled. The log's circular retention and limited retained history constrain this finding.
 
 ## Verified event 4672 metadata sample

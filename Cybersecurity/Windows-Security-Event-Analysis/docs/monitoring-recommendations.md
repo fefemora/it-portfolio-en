@@ -32,3 +32,5 @@ After choosing a reasonable retention target, repeat time-span measurements on d
 - [Microsoft Learn — Audit Special Logon](https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/audit-special-logon)
 
 References support recommended approaches, not confirmation of deployment.
+
+**Related assessment:** [Windows Security Hardening](../../Windows-Security-Hardening/README.md) documents the later baseline and the authorized Security log size change. The recommendations here retain their original scope.

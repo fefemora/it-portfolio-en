@@ -5,6 +5,15 @@
 **Status:** **Baseline phase closed through Step 30.** Logon success/failure audit policy confirmed in Step 25; 235 successful 4624 events and no 4625 matches in Step 26's 24-hour window; Step 27 showed 229 service, 4 cached-interactive, 2 unlock events. Baseline steps including BitLocker, TPM, Secure Boot, UEFI, GPT and the Windows PowerShell ScriptBlockLogging machine policy key and PowerShell Operational channel status, 4104 count, 11-ID distribution, queried HKCU policy-key absence, and 4104 warning-severity count, and 5.05-day Operational event-history span verified; HKLM/HKCU Module Logging policy keys absent at inspected paths, and zero retained event 4103 records retrieved; HKLM/HKCU Transcription policy keys absent at inspected paths; PowerShell logging baseline summarized. **CHG-001 implemented; size and immediate retained-event accessibility verified**; seven-day retention target pending.  
 **Operating principle:** Minimal impact, read-only, anonymized output. Avoid changing live defenses while investigating.
 
+## Quick index
+
+- [Firewall and Defender](#step-1--review-windows-firewall-profiles-verified)
+- [Security log capacity](#step-6--verify-security-log-capacity-verified-read-only)
+- [Authorized log-size change](#chg-001--security-event-log-maximum-size-increase-implemented-and-configuration-verified)
+- [PowerShell logging](#step-13--windows-powershell-script-block-logging-policy-key-verified-read-only)
+- [Authentication](#step-25--windows-logon-audit-policy-verified-read-only)
+- [Project closure](#step-30--project-closure-and-validation-summary)
+
 ## Step 1 — Review Windows Firewall profiles (verified)
 
 ```powershell
@@ -380,7 +389,11 @@ TpmActivated : True
 
 ## Step 10 — Secure Boot status (verified; read-only)
 
-**Command executed:** `Confirm-SecureBootUEFI`
+**Command executed:**
+
+```powershell
+Confirm-SecureBootUEFI
+```
 
 **Actual result (user confirmed):**
 
@@ -1144,6 +1157,7 @@ For every check, record:
 
 ## References & Official Documentation
 
+- [Get-WinEvent](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.diagnostics/get-winevent)
 - [Microsoft Learn — Get-NetFirewallProfile](https://learn.microsoft.com/en-us/powershell/module/netsecurity/get-netfirewallprofile)
 - [Microsoft Learn — Get-MpComputerStatus](https://learn.microsoft.com/en-us/powershell/module/defender/get-mpcomputerstatus)
 - [Microsoft Learn — auditpol /get](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/auditpol-get)
