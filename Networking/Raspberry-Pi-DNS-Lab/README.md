@@ -74,3 +74,105 @@ Address:  192.168.1.17
 `NXDOMAIN` confirmed that the DNS server responded during the controlled failure. In this case, the missing record caused the failure. The `UnKnown` label refers to the server name that `nslookup` tries to obtain through a reverse lookup. I used the `NXDOMAIN` response for the diagnosis.
 
 The validation covered a direct A-record query from one Windows client on the local network and the subsequent recovery. The corporate INC-003 scenario remains a simulation.
+
+## Follow-up — Automated monitoring with systemd
+
+I automated the query to the same DNS server with `dig` and a systemd timer. The check runs on the Raspberry Pi and records the outcome in the local journal. It reads the DNS response status and the `dig` exit code separately. `NXDOMAIN` is a valid server response, while exit code 9 indicates that the query received no DNS reply.
+
+### Installed configuration
+
+I installed `bind9-dnsutils` and saved this executable as `/usr/local/bin/pi3-dns-check` with mode `755`.
+
+```sh
+#!/bin/sh
+
+server=192.168.1.17
+name=intranet.pi-lab.test.
+expected=192.168.1.17
+
+reply=$(/usr/bin/dig -r "@$server" "$name" A \
+    +time=2 +tries=1 +noall +comments +answer 2>&1)
+result=$?
+
+case "$result" in
+    0) ;;
+    9) echo "DNS_FAIL reason=NO_REPLY name=$name server=$server"; exit 1 ;;
+    *) echo "DNS_FAIL reason=DIG_ERROR code=$result name=$name"; exit 1 ;;
+esac
+
+status=$(printf '%s\n' "$reply" | sed -n 's/^.*status: \([A-Z0-9]*\),.*$/\1/p')
+if [ "$status" != NOERROR ]; then
+    echo "DNS_FAIL reason=${status:-UNKNOWN_STATUS} name=$name server=$server"
+    exit 1
+fi
+
+address=$(printf '%s\n' "$reply" | awk -v name="$name" '$1 == name && $4 == "A" {print $5}')
+if [ "$address" != "$expected" ]; then
+    echo "DNS_FAIL reason=UNEXPECTED_ANSWER name=$name expected=$expected"
+    exit 1
+fi
+
+echo "DNS_OK name=$name server=$server answer=$address"
+```
+
+`/etc/systemd/system/pi3-dns-check.service`
+
+```ini
+[Unit]
+Description=Raspberry Pi lab DNS check
+
+[Service]
+Type=oneshot
+DynamicUser=yes
+ExecStart=/usr/local/bin/pi3-dns-check
+```
+
+`/etc/systemd/system/pi3-dns-check.timer`
+
+```ini
+[Unit]
+Description=Run the lab DNS check every minute
+
+[Timer]
+OnActiveSec=5s
+OnUnitActiveSec=1min
+AccuracySec=1s
+
+[Install]
+WantedBy=timers.target
+```
+
+I loaded the units with `sudo systemctl daemon-reload` and enabled the timer with `sudo systemctl enable --now pi3-dns-check.timer`. The service runs one query per activation under a dynamic systemd user.
+
+### Tests and evidence
+
+First I commented out the test A record, restarted `dnsmasq`, and waited for the scheduled result. I restored the record and restarted the service to verify recovery. For the no-reply test, I scheduled service restoration before stopping the resolver:
+
+```bash
+sudo systemd-run --unit=pi3-dns-restore --on-active=90s \
+  --timer-property=AccuracySec=1s \
+  /usr/bin/systemctl start dnsmasq.service &&
+sudo systemctl stop dnsmasq.service
+```
+
+| Local time (UTC−03:00) | Observed evidence |
+|---|---|
+| 19:15:56 and 19:16:57 | `DNS_OK`, `answer=192.168.1.17` |
+| 19:17:58 | `DNS_FAIL reason=NXDOMAIN` |
+| 19:18:59 | `DNS_OK`, `answer=192.168.1.17` |
+| 19:20:17 | systemd recorded `dnsmasq.service` stopping. |
+| 19:21:00 | `DNS_FAIL reason=NO_REPLY` |
+| 19:21:47 | The transient recovery service brought `dnsmasq.service` back up. |
+| 19:24:03 | `DNS_OK`, `answer=192.168.1.17` in the later excerpt. |
+
+The test ran on November 25, 2026. The `dnsmasq` journal shows 90 seconds between shutdown and startup. The 19:24:03 `DNS_OK` is the later check visible in the excerpt. The first successful query after startup was not established.
+
+Evidence query:
+
+```bash
+sudo journalctl -u pi3-dns-check.service \
+  --since '2026-11-25 19:15:00' \
+  --grep='DNS_(OK|FAIL)' -o short-iso --no-pager
+```
+
+The validation covers an A-record query from the same host as the resolver. It checks the local DNS service response. Availability from another network host requires an external probe.
