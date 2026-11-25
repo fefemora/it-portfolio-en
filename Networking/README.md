@@ -10,7 +10,7 @@ Network troubleshooting starts with understanding **what works, what fails, and 
 
 | Case | Networking skills | Evidence |
 |---|---|---|
-| [Raspberry Pi DNS troubleshooting lab](Raspberry-Pi-DNS-Lab/README.md) | Direct DNS queries, NXDOMAIN diagnosis and recovery validation | **Executed in a home lab** |
+| [Raspberry Pi DNS troubleshooting lab](Raspberry-Pi-DNS-Lab/README.md) | Direct queries, DNS troubleshooting, and systemd monitoring for `NXDOMAIN`, no replies, and recovery | **Executed in a home lab** |
 | [INC-003 — DNS Resolution Failure](../IT-Support/Service-Desk-Incident-Management/incidents/INC-003-DNS-Resolution.md) | Resolver configuration, client testing and escalation | **Simulated** |
 | [INC-004 — VPN Connectivity Failure](../IT-Support/Service-Desk-Incident-Management/incidents/INC-004-VPN-Connectivity.md) | Tunnel state, routes, DNS and internal access | **Simulated** |
 | [DNS decision tree](../IT-Support/Service-Desk-Incident-Management/incidents/INC-003-DNS-Decision-Tree.md) | Structured isolation of DNS issues | **Simulated** |
