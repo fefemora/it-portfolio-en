@@ -36,3 +36,44 @@ Excerpt transcribed from the PuTTY screenshot. I replaced the username and sourc
 I correlated the entries by time, username, source IPv6 address, source port, and `sshd-session` PID. The two rejections share a port and PID with the closure marked `[preauth]`. The successful login came 23 seconds after the closure, with the same username and IPv6 address and a different port and PID. The sequence shows that authentication succeeded on a new connection.
 
 I classified this episode as legitimate lab activity because I could relate it to my password entry error and later PuTTY login. The journal establishes the authentication sequence. Attribution to the operator depends on the lab context, and the review is limited to the selected events.
+
+## Follow-up — SSH hardening with Ed25519
+
+I moved SSH access on the Raspberry Pi from password-capable authentication to public-key authentication. I kept the working PuTTY sessions open while checking a fresh connection so I could revert the configuration if needed.
+
+### Baseline and implementation
+
+OpenSSH initially reported `pubkeyauthentication yes`, `passwordauthentication yes`, and `kbdinteractiveauthentication no`. I generated an Ed25519 key pair in PuTTYgen, protected the private `.ppk` with a passphrase, and added the public key to `~/.ssh/authorized_keys`. The SSH journal recorded `Accepted publickey` with `ED25519` at **18:03:04 (UTC−03:00)** before the server policy change.
+
+I applied the following settings through `/etc/ssh/sshd_config.d/00-pi3-lab-key-only.conf`, with a syntax check using `sudo /usr/sbin/sshd -t` before reloading `ssh.service`.
+
+```text
+PubkeyAuthentication yes
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+```
+
+### Functional validation from Windows
+
+- **With the key:** A fresh PuTTY session using the Ed25519 `.ppk` reached the Raspberry Pi shell.
+- **With password preferred and public keys disabled:** The Windows OpenSSH client was denied without receiving an account password prompt. The command and output below use an anonymized username.
+
+```powershell
+ssh -o PubkeyAuthentication=no -o PreferredAuthentications=password <lab-user>@pi3-lab.local
+```
+
+```text
+<lab-user>@pi3-lab.local: Permission denied (publickey).
+```
+
+**Final effective settings** reported by `sshd -T`:
+
+```text
+pubkeyauthentication yes
+passwordauthentication no
+kbdinteractiveauthentication no
+```
+
+Together, the configuration check and the two client tests verify the change for the tested account and connection. The passphrase entered in PuTTY unlocked the private key on Windows. It was separate from the account password on the Pi.
+
+**Rollback plan:** Move the lab drop-in out of the `*.conf` pattern, run `sshd -t`, and reload the service from an open session.
