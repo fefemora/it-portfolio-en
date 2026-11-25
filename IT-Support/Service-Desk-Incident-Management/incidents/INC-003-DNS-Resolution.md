@@ -9,6 +9,8 @@
 **Environment:** Windows 11 Enterprise / Corporate Network  
 **Status:** Simulated — Investigation and Resolution Plan
 
+**Related lab:** [DNS troubleshooting with Raspberry Pi 3](../../../Networking/Raspberry-Pi-DNS-Lab/README.md) documents a controlled missing-record test and its recovery from Windows.
+
 ## DNS Troubleshooting Workflow
 
 ```mermaid
