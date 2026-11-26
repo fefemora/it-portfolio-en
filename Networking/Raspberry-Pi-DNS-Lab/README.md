@@ -195,7 +195,27 @@ dnsmasq: syntax check OK.
 Restauración de prueba validada en: /home/<usuario>/pi3-dns-restore.7Btq9O
 ```
 
-The username in this excerpt was redacted. The drill verified transfer integrity, extraction, and DNS and shell syntax. The restored files stayed in the staging directory while the live configuration stayed in place. Starting the restored service and timer was outside the scope of this drill.
+The username in this excerpt was redacted. The drill verified transfer integrity, extraction, and DNS and shell syntax. The restored files stayed in the staging directory while the live configuration stayed in place.
+
+### Functional check with the restored DNS configuration
+
+After extracting the archive copied back from Windows, I made a test copy of its `pi3-lab.conf`. I changed the listener to `127.0.0.1` and started a separate `dnsmasq` process on port `1053` in the foreground with a 120-second timeout. The test kept the original A record and the active resolver configuration.
+
+```text
+dnsmasq: syntax check OK.
+dnsmasq: started, version 2.91 cachesize 150
+```
+
+From a second PuTTY session, I queried the test instance first and the active resolver second. The query commands and answers below are shown as separate pairs for clarity.
+
+```console
+$ dig @127.0.0.1 -p 1053 intranet.pi-lab.test. A +short +time=2 +tries=1
+192.168.1.17
+$ dig @192.168.1.17 -p 53 intranet.pi-lab.test. A +short +time=2 +tries=1
+192.168.1.17
+```
+
+The restored configuration served the expected A record on the test port. The active resolver also answered the check on port 53. This verifies the restored DNS configuration in an isolated process. The recovered systemd service and timer remain outside the functional check.
 
 ## Follow-up — Windows probe and state-change alerts
 
