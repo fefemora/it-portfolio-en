@@ -176,3 +176,23 @@ sudo journalctl -u pi3-dns-check.service \
 ```
 
 The validation covers an A-record query from the same host as the resolver. It checks the local DNS service response. Availability from another network host requires an external probe.
+
+## Follow-up — DNS backup and restore drill
+
+I backed up the resolver configuration, the DNS check script, and the systemd service and timer as relative paths in a compressed archive. The backup scope was limited to these four lab files:
+
+- `etc/dnsmasq.d/pi3-lab.conf`
+- `usr/local/bin/pi3-dns-check`
+- `etc/systemd/system/pi3-dns-check.service`
+- `etc/systemd/system/pi3-dns-check.timer`
+
+1. **Backup on the Pi.** I created `pi3-dns-20261125-200756.tar.gz` with `tar`, listed its contents, and verified its separate SHA-256 manifest with `sha256sum -c`. The result was `pi3-dns-20261125-200756.tar.gz: OK`.
+2. **Off-device copy.** I transferred the archive and its manifest to Windows over SFTP with PSCP using the existing PuTTY key. Comparing the manifest with `Get-FileHash -Algorithm SHA256` returned `True`.
+3. **Restore from the Windows copy.** I transferred that archive back under a different name, compared its bytes with `cmp`, and extracted it into a new staging directory. I checked the recovered configuration with `dnsmasq --test --conf-file` and the recovered script with `sh -n`. The completion message was conditional on all checks succeeding.
+
+```text
+dnsmasq: syntax check OK.
+Restauración de prueba validada en: /home/<usuario>/pi3-dns-restore.7Btq9O
+```
+
+The username in this excerpt was redacted. The drill verified transfer integrity, extraction, and DNS and shell syntax. The restored files stayed in the staging directory while the live configuration stayed in place. Starting the restored service and timer was outside the scope of this drill.
