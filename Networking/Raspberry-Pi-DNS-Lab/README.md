@@ -196,3 +196,56 @@ Restauración de prueba validada en: /home/<usuario>/pi3-dns-restore.7Btq9O
 ```
 
 The username in this excerpt was redacted. The drill verified transfer integrity, extraction, and DNS and shell syntax. The restored files stayed in the staging directory while the live configuration stayed in place. Starting the restored service and timer was outside the scope of this drill.
+
+## Follow-up — Windows probe and state-change alerts
+
+I ran a probe from a second host on the network. PowerShell queried the A record for `intranet.pi-lab.test.` directly at `192.168.1.17` and compared the reply with the expected address. The loop waits ten seconds between queries. The console shows every `CHECK`. `Tee-Object` appends the initial `BASELINE` and state changes (`ALERT` or `RECOVERY`) to a local file.
+
+### Controlled test
+
+I removed the test A record and restored it after observing two consecutive failures from Windows. The console output shows one alert at **23:32:02**, a second failed check without another alert at **23:32:12**, and one recovery notice at **23:32:22** (UTC−03:00). The following check also reported `OK`.
+
+```text
+2026-11-25 23:31:31 -03:00 BASELINE OK A=192.168.1.17
+2026-11-25 23:32:02 -03:00 CHECK FAIL DNS_ERROR_RCODE_NAME_ERROR,Microsoft.DnsClient.Commands.ResolveDnsName
+2026-11-25 23:32:02 -03:00 ALERT FAIL DNS_ERROR_RCODE_NAME_ERROR,Microsoft.DnsClient.Commands.ResolveDnsName
+2026-11-25 23:32:12 -03:00 CHECK FAIL DNS_ERROR_RCODE_NAME_ERROR,Microsoft.DnsClient.Commands.ResolveDnsName
+2026-11-25 23:32:22 -03:00 CHECK OK A=192.168.1.17
+2026-11-25 23:32:22 -03:00 RECOVERY OK A=192.168.1.17
+2026-11-25 23:32:32 -03:00 CHECK OK A=192.168.1.17
+```
+
+The 20 seconds between alert and recovery are the probe's observed timestamps. The test covered resolution from Windows on the local network and notifications during an interactive run. The published evidence is from the PowerShell console.
+
+### PowerShell probe
+
+```powershell
+$log = Join-Path $env:USERPROFILE ("pi3-dns-monitor-{0}.log" -f (Get-Date -Format 'yyyyMMdd-HHmmss'))
+$anterior = $null
+Write-Host "Registro: $log"
+
+while ($true) {
+    $estado = 'FAIL'
+    try {
+        $respuesta = Resolve-DnsName -Name 'intranet.pi-lab.test.' -Type A -Server '192.168.1.17' -DnsOnly -NoHostsFile -QuickTimeout -ErrorAction Stop
+        $direcciones = @($respuesta | Where-Object Type -eq 'A' | ForEach-Object IPAddress)
+        $detalle = 'A=' + ($direcciones -join ',')
+        if ($direcciones.Count -eq 1 -and $direcciones[0] -eq '192.168.1.17') {
+            $estado = 'OK'
+        }
+    } catch {
+        $detalle = $_.FullyQualifiedErrorId
+    }
+
+    $hora = Get-Date -Format 'yyyy-MM-dd HH:mm:ss zzz'
+    Write-Host "$hora CHECK $estado $detalle"
+    if ($estado -ne $anterior) {
+        $evento = if ($null -eq $anterior) { 'BASELINE' }
+                  elseif ($estado -eq 'FAIL') { 'ALERT' }
+                  else { 'RECOVERY' }
+        "$hora $evento $estado $detalle" | Tee-Object -FilePath $log -Append
+        $anterior = $estado
+    }
+    Start-Sleep -Seconds 10
+}
+```
